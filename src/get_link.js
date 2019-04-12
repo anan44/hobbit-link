@@ -17,7 +17,6 @@ module.exports.get_link = (event, context, callback) => {
     const headers = {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Credentials": true,
-      location: data.Item.real,
     };
 
     if (error) {
@@ -26,13 +25,29 @@ module.exports.get_link = (event, context, callback) => {
         statusCode: 500,
         headers: headers,
         body: JSON.stringify({
-          status: false
+          status: false,
+          message: "no link found"
         })
       }
       callback(null, res);
       return;
     }
 
+    if (!data || !data.Item ) {
+      console.log("no link found")
+      const res = {
+        statusCode: 404,
+        headers: headers,
+        body: JSON.stringify({
+          status: false,
+          message: `Link: ${aliasLink} not found.`
+        })
+      }
+      callback(null, res);
+      return;
+    }
+
+    headers.location = data.Item.real
     const res = {
       statusCode: 301,
       headers: headers,
