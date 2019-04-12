@@ -1,15 +1,14 @@
 'use strict';
-const uuid = require("uuid");
 const aws = require('aws-sdk');
 const dynamoDb = new aws.DynamoDB.DocumentClient();
 
-
 module.exports.put_link = (event, context, callback) => {
+  const body = JSON.parse(event.body)
   const params = {
-    TableName: "Link-Table",
+    TableName: "LinkTable",
     Item: {
-      alias: uuid.v1(),
-      real: "http://" + uuid.v1()
+      alias: body.alias,
+      real: body.real
     }
   }
 
