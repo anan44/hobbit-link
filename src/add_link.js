@@ -2,11 +2,23 @@
 const aws = require('aws-sdk');
 const dynamoDb = new aws.DynamoDB.DocumentClient();
 
-module.exports.add_link = (event, context, callback) => {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Credentials": true
-  };
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Credentials": true
+};
+
+const getConflict = async alias => {
+  const params = {
+    TableName: "LinkTable",
+    Key: {
+      alias: alias
+    }
+  }
+  const conflict = await dynamoDb.get(params).promise()
+  return conflict
+}
+
+const postNewLink =  async event => {
   const body = JSON.parse(event.body)
   const deleteTime = Math.floor(new Date(body.deleteDate).getTime() / 1000)
   const params = {
@@ -17,47 +29,40 @@ module.exports.add_link = (event, context, callback) => {
       timeToLive: deleteTime
     }
   }
-  const checkParams = {
+  const newPost = await dynamoDb.put(params).promise()
+  return newPost
+}
+
+module.exports.add_link = async (event, context, callback) => {
+  const body = JSON.parse(event.body)
+  const deleteTime = Math.floor(new Date(body.deleteDate).getTime() / 1000)
+  const params = {
     TableName: "LinkTable",
-    Key: {
-      alias: body.alias
+    Item: {
+      alias: body.alias,
+      real: body.real,
+      timeToLive: deleteTime
     }
   }
 
-  dynamoDb.get(checkParams, (error, data) => {
-    console.log(data)
-    if (data && data.Item) {
-      console.log("Alias conflict!")
-      const res = {
-        statusCode: 403,
-        headers: headers,
-        body: JSON.stringify({
-          status: false,
-          error: "Alias conflict. Requested alias is currently taken. Try another alias."
-        })
-      }
-      callback(null, res);
-      return
-    }
-    dynamoDb.put(params, (error, data) => {
-      if (error) {
-        console.log(error)
-        const res = {
-          statusCode: 500,
-          headers: headers,
-          body: JSON.stringify({
-            status: false
-          })
-        };
-        callback(null, res);
-        return;
-      }
-      const res = {
-        statusCode: 200,
-        headers: headers,
-        body: JSON.stringify(params.Item)
-      }
-      callback(null, res);
+  const conflict = await getConflict(body.alias)
+  if (conflict.Item) {
+    callback(null, {
+      statusCode: 403,
+      headers,
+      body: JSON.stringify({
+        error: "Alias conflict."
+      })
+    })
+    return
+  }
+
+  await postNewLink(event)
+  callback(null, {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({
+      message: "Kinda works"
     })
   })
 };
