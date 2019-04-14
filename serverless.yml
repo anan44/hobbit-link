@@ -45,7 +45,7 @@ functions:
     handler: src/get_link.get_link
     events:
       - http:
-          path: 'link/{link}'
+          path: link/{link}
           method: get
 
 
@@ -64,3 +64,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+        TimeToLiveSpecification:
+          AttributeName: timeToLive
+          Enabled: true
