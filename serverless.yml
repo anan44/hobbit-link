@@ -35,7 +35,7 @@ functions:
       - http:
           path: api/get_docs
           method: get
-  put_link:
+  add_link:
     handler: src/add_link.add_link
     events:
       - http:

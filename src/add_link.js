@@ -62,7 +62,12 @@ module.exports.add_link = async (event, context, callback) => {
     statusCode: 200,
     headers,
     body: JSON.stringify({
-      message: "Kinda works"
+      message: "Link created.",
+      link: {
+        alias: body.alias,
+        real: body.real,
+        deleteDate: body.deleteDate
+      }
     })
   })
 };
