@@ -36,11 +36,11 @@ functions:
           path: api/get_docs
           method: get
   put_link:
-    handler: src/put_link.put_link
+    handler: src/add_link.add_link
     events:
       - http:
-          path: api/put_link
-          method: put
+          path: api/add_link
+          method: post
   get_link:
     handler: src/get_link.get_link
     events:

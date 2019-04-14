@@ -2,7 +2,7 @@
 const aws = require('aws-sdk');
 const dynamoDb = new aws.DynamoDB.DocumentClient();
 
-module.exports.put_link = (event, context, callback) => {
+module.exports.add_link = (event, context, callback) => {
   const body = JSON.parse(event.body)
   const params = {
     TableName: "LinkTable",
