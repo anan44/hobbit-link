@@ -14,7 +14,7 @@ const getConflict = async alias => {
       alias: alias
     }
   }
-  const conflict = await dynamoDb.get(params).promise()
+  const conflict = dynamoDb.get(params).promise()
   return conflict
 }
 
@@ -29,7 +29,7 @@ const postNewLink =  async event => {
       timeToLive: deleteTime
     }
   }
-  const newPost = await dynamoDb.put(params).promise()
+  const newPost = dynamoDb.put(params).promise()
   return newPost
 }
 
