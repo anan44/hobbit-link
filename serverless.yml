@@ -33,13 +33,13 @@ functions:
     handler: src/docs.get_docs
     events:
       - http:
-          path: api/get_docs
+          path: get_docs
           method: get
   add_link:
     handler: src/add_link.add_link
     events:
       - http:
-          path: api/add_link
+          path: link
           method: post
   get_link:
     handler: src/get_link.get_link
