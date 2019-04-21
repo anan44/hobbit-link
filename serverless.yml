@@ -47,6 +47,12 @@ functions:
       - http:
           path: link/{link}
           method: get
+  delete_link:
+    handler: src/delete_link.delete_link
+    events:
+      - http:
+          path: link/{link}
+          method: delete
 
 
 resources:

@@ -26,6 +26,7 @@ const postNewLink =  async event => {
     Item: {
       alias: body.alias,
       real: body.real,
+      secret: body.secret,
       timeToLive: deleteTime
     }
   }
@@ -35,15 +36,6 @@ const postNewLink =  async event => {
 
 module.exports.add_link = async (event, context, callback) => {
   const body = JSON.parse(event.body)
-  const deleteTime = Math.floor(new Date(body.deleteDate).getTime() / 1000)
-  const params = {
-    TableName: "LinkTable",
-    Item: {
-      alias: body.alias,
-      real: body.real,
-      timeToLive: deleteTime
-    }
-  }
 
   const conflict = await getConflict(body.alias)
   if (conflict.Item) {
