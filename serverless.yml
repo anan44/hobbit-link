@@ -15,6 +15,7 @@ service: hobbit-links
 provider:
   name: aws
   runtime: nodejs8.10
+  memorySize: 512
   stage: dev
   region: eu-west-1
   iamRoleStatements:

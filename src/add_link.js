@@ -1,6 +1,8 @@
 'use strict';
-const aws = require('aws-sdk');
-const dynamoDb = new aws.DynamoDB.DocumentClient();
+const aws = require('aws-sdk')
+const dynamoDb = new aws.DynamoDB.DocumentClient()
+const bcrpyt = require("bcryptjs")
+const salt = bcrpyt.genSaltSync(10)
 
 const headers = {
   "Access-Control-Allow-Origin": "*",
@@ -18,20 +20,22 @@ const getConflict = async alias => {
   return conflict
 }
 
-const postNewLink =  async event => {
+const postNewLink = async event => {
   const body = JSON.parse(event.body)
   const deleteTime = Math.floor(new Date(body.deleteDate).getTime() / 1000)
+  const hash = bcrpyt.hashSync(body.secret)
   const params = {
     TableName: "LinkTable",
     Item: {
       alias: body.alias,
       real: body.real,
-      secret: body.secret,
+      secret: hash,
       timeToLive: deleteTime
     }
   }
   const newPost = dynamoDb.put(params).promise()
   return newPost
+
 }
 
 module.exports.add_link = async (event, context, callback) => {

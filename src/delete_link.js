@@ -1,6 +1,7 @@
 'use strict';
 const aws = require('aws-sdk')
 const dynamoDb = new aws.DynamoDB.DocumentClient()
+const bcrypt = require("bcryptjs")
 
 const checkSecret = async (alias, secret) => {
   const params = {
@@ -11,7 +12,7 @@ const checkSecret = async (alias, secret) => {
   }
   try {
     const { Item } = await dynamoDb.get(params).promise()
-    if (Item.secret === secret) {
+    if (bcrypt.compareSync(secret, Item.secret)) {
       console.log("Same secret")
       return true
     }
